@@ -1,0 +1,50 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradlew
+!gradlew.bat
+
+### Spring Boot ###
+logs/
+*.log
+
+### IDE 설정 ###
+# IntelliJ
+.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse / STS
+.project
+.classpath
+.settings/
+.springBeans
+.apt_generated
+bin/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+### 환경 파일 ###
+.env
+application-local*.yml
+application-local*.properties
+
+### 기타 ###
+HELP.md
+.DS_Store
