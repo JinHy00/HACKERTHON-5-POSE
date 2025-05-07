@@ -42,6 +42,8 @@ nbdist/
 
 ### 환경 파일 ###
 .env
+application-local-dev.yml
+application-local.yml
 application-local*.yml
 application-local*.properties
 
