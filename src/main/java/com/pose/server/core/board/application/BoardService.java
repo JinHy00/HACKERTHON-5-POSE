@@ -5,6 +5,8 @@ import com.pose.server.core.board.domain.BoardStatus;
 import com.pose.server.core.board.infrastructure.BoardRepository;
 import com.pose.server.core.board.payload.BoardRequestDTO;
 import com.pose.server.core.board.payload.BoardResponseDTO;
+import com.pose.server.core.member.domain.MemberEntity;
+import com.pose.server.core.member.infrastructure.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,11 +22,14 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     /* 게시글 작성 -> void 또는 responseDTO */
     public void create(BoardRequestDTO dto, String imagePath) {
+        MemberEntity member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         BoardEntity board = BoardEntity.builder()
-                .memberId(dto.getMemberId())
+                .memberEntity(member)
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .image(imagePath) // 실제 파일 경로 저장
@@ -42,7 +47,7 @@ public class BoardService {
         return boardRepository.findByBoardStatus(BoardStatus.FREE, pageable)
                 .map(board -> BoardResponseDTO.builder()
                         .boardId(board.getBoardId())
-                        .memberId(board.getMemberId())
+                        .memberId(board.getMemberEntity().getMemberId())
                         .title(board.getTitle())
                         .content(board.getContent())
                         .image(board.getImage())
@@ -63,7 +68,7 @@ public class BoardService {
 
         return BoardResponseDTO.builder()
                 .boardId(board.getBoardId())
-                .memberId(board.getMemberId())
+                .memberId(board.getMemberEntity().getMemberId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .image(board.getImage())
@@ -85,7 +90,7 @@ public class BoardService {
                         keyword, BoardStatus.FREE, pageable)
                 .map(board -> BoardResponseDTO.builder()
                         .boardId(board.getBoardId())
-                        .memberId(board.getMemberId())
+                        .memberId(board.getMemberEntity().getMemberId())
                         .title(board.getTitle())
                         .content(board.getContent())
                         .image(board.getImage())
@@ -117,7 +122,7 @@ public class BoardService {
 
         return BoardResponseDTO.builder()
                 .boardId(board.getBoardId())
-                .memberId(board.getMemberId())
+                .memberId(board.getMemberEntity().getMemberId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .image(board.getImage())

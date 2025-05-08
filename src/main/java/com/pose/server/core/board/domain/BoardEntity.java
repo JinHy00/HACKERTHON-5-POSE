@@ -1,5 +1,6 @@
 package com.pose.server.core.board.domain;
 
+import com.pose.server.core.member.domain.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class BoardEntity {
     @Column(name = "board_id")
     private Long boardId;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private MemberEntity memberEntity;
 
     @Column(name = "title", nullable = false)
     private String title;

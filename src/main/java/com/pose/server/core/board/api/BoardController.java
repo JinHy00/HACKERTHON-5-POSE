@@ -5,6 +5,7 @@ import com.pose.server.core.board.domain.BoardEntity;
 import com.pose.server.core.board.payload.BoardRequestDTO;
 import com.pose.server.core.board.payload.BoardResponseDTO;
 import com.pose.server.core.member.application.MemberService;
+import com.pose.server.core.member.domain.MemberEntity;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +44,15 @@ public class BoardController {
         return "board/list";
     }
 
+    /* 멘티 별 게시글 리스트
+      * 멘티 마이페이지에서 뜨도록
+     */
 
-    /* 멘티 별 게시글 리스트 */
 
-    /* 멘토 별 게시글 리스트 (1:1 게시판 리스트) */
+
+    /* 멘토 별 게시글 리스트 (1:1 게시판 리스트)
+    * 멘토 마이페이지에서 뜨도록?
+    * */
 
 
     /* 게시글 한개 view */
@@ -61,7 +67,7 @@ public class BoardController {
     /* 게시글 검색 결과 -> ajax */
     @GetMapping("/search")
     public String search(@RequestParam String keyword,
-                         @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                         @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                          Model model) {
         Page<BoardResponseDTO> resultPage = boardService.searchByTitle(keyword, pageable);
         model.addAttribute("boardPage", resultPage); // boardList → boardPage
@@ -92,7 +98,8 @@ public class BoardController {
         }
         log.info("userID:{}",userId);
         /* userId 로 memberId setting */
-        Long memberId = memberService.getMemberIdByUserId(userId);
+        Long memberId = memberService.findByUserId(userId).getMemberId();
+        // Long memberId = memberService.getMemberIdByUserId(userId);
         log.info("memberId:{}",memberId);
         dto.setMemberId(memberId);
 
