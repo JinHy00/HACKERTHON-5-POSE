@@ -6,41 +6,70 @@
 </head>
 <body>
 <h1>자유 게시판</h1>
+<form id="searchForm">
+    <input type="text" name="keyword" id="keyword" placeholder="제목으로 검색" />
+    <button type="submit">검색</button>
+</form>
+<br>
+
 <a th:href="@{/board/create}">글쓰기</a>
 
-<!-- 게시글 테이블 -->
-<table border="1">
-    <thead>
-    <tr>
-        <th>번호</th>
-        <th>제목</th>
-        <th>작성일</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="board : ${boardPage.content}">
-        <td th:text="${board.boardId}"></td>
-        <td>
-            <a th:href="@{'/board/' + ${board.boardId}}" th:text="${board.title}"></a>
-        </td>
-        <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></td>
-    </tr>
-    </tbody>
-</table>
+<div id="board-result" th:fragment="boardTable">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${boardPage.content}">
+            <td th:text="${board.boardId}"></td>
+            <td>
+                <a th:href="@{'/board/' + ${board.boardId}}" th:text="${board.title}"></a>
+            </td>
+            <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></td>
+        </tr>
+        </tbody>
+    </table>
 
-<!-- 페이징 -->
-<div>
-    <span th:if="${boardPage.hasPrevious()}">
-        <a th:href="@{/board(page=${boardPage.number - 1})}">이전</a>
+    <!-- 페이징 (검색 키워드 유지) -->
+    <div>
+        <span th:if="${boardPage.hasPrevious()}">
+            <a href="#" th:onclick="'loadSearchPage(' + ${boardPage.number - 1} + ')'">이전</a>
+        </span>
+
+        <span th:if="${boardPage.totalPages > 0}"
+              th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}">
+        <a href="#" th:onclick="'loadSearchPage(' + ${i} + ')'"
+           th:text="${i + 1}"
+           th:classappend="${boardPage.number == i} ? 'active' : ''"></a>
     </span>
 
-    <span th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}">
-        <a th:href="@{/board(page=${i})}" th:text="${i + 1}" th:classappend="${boardPage.number == i} ? 'active' : ''"></a>
-    </span>
-
-    <span th:if="${boardPage.hasNext()}">
-        <a th:href="@{/board(page=${boardPage.number + 1})}">다음</a>
-    </span>
+        <span th:if="${boardPage.hasNext()}">
+            <a href="#" th:onclick="'loadSearchPage(' + ${boardPage.number + 1} + ')'">다음</a>
+        </span>
+    </div>
 </div>
+
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        loadSearchPage(0);
+    });
+
+    function loadSearchPage(page) {
+        const keyword = document.getElementById('keyword').value;
+
+        fetch(`/board/search?keyword=${encodeURIComponent(keyword)}&page=${page}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('board-result').innerHTML = html;
+            });
+    }
+</script>
+
 </body>
 </html>
