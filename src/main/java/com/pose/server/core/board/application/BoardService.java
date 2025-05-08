@@ -79,6 +79,34 @@ public class BoardService {
                 .build();
     }
 
+    /* 멘티 별 게시글 리스트 */
+    public List<BoardResponseDTO> findByMemberAndStatus(Long memberId, String status) {
+        List<BoardEntity> boards;
+
+        if ("FREE".equalsIgnoreCase(status)) {
+            boards = boardRepository.findByMemberEntity_MemberIdAndBoardStatus(memberId, BoardStatus.FREE);
+        } else if ("PERSONAL".equalsIgnoreCase(status)) {
+            boards = boardRepository.findByMemberEntity_MemberIdAndBoardStatus(memberId, BoardStatus.PERSONAL);
+        } else {
+            boards = boardRepository.findByMemberEntity_MemberId(memberId);
+        }
+
+        return boards.stream()
+                .map(board -> BoardResponseDTO.builder()
+                        .boardId(board.getBoardId())
+                        .memberId(board.getMemberEntity().getMemberId())
+                        .title(board.getTitle())
+                        .content(board.getContent())
+                        .image(board.getImage())
+                        .mentorId(board.getMentorId())
+                        .boardStatus(board.getBoardStatus())
+                        .createdAt(board.getCreatedAt())
+                        .updatedAt(board.getUpdatedAt())
+                        .build())
+                .toList();
+    }
+
+
 
 
 

@@ -47,6 +47,42 @@ public class BoardController {
     /* 멘티 별 게시글 리스트
       * 멘티 마이페이지에서 뜨도록
      */
+    @GetMapping("/mentee")
+    public String menteePage(@RequestParam(value = "status", required = false, defaultValue = "ALL") String status,
+                             HttpSession session,
+                             Model model) {
+
+        String userId = (String) session.getAttribute("user");
+        if (userId == null) return "redirect:/members/login";
+
+        Long memberId = memberService.findByUserId(userId).getMemberId();
+
+        // 멘티 정보
+        model.addAttribute("mentee", memberService.findByUserId(userId));
+
+        // 초기 목록
+        List<BoardResponseDTO> boardList = boardService.findByMemberAndStatus(memberId, status);
+        model.addAttribute("boardList", boardList);
+        model.addAttribute("currentStatus", status);
+
+        return "board/mentee-page";
+    }
+
+    @GetMapping("/mentee/filter")
+    public String filterMenteeBoard(@RequestParam String status,
+                                    HttpSession session,
+                                    Model model) {
+        String userId = (String) session.getAttribute("user");
+        if (userId == null) return "redirect:/members/login";
+
+        Long memberId = memberService.findByUserId(userId).getMemberId();
+
+        List<BoardResponseDTO> boardList = boardService.findByMemberAndStatus(memberId, status);
+        model.addAttribute("boardList", boardList);
+
+        return "board/mentee-page :: boardTable";
+    }
+
 
 
 

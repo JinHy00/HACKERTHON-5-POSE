@@ -16,4 +16,10 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     Page<BoardEntity> findByBoardStatus(BoardStatus boardStatus, Pageable pageable);
 
 
+    // 멤버 ID + 상태로 조회
+    List<BoardEntity> findByMemberEntity_MemberIdAndBoardStatus(Long memberId, BoardStatus boardStatus);
+
+    // 멤버 ID로 전체 조회 (상태 무관)
+    List<BoardEntity> findByMemberEntity_MemberId(Long memberId);
+
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>멘티 마이페이지</title>
+</head>
+<body>
+<h1>멘티 마이페이지</h1>
+
+<p th:text="'아이디: ' + ${mentee.userId}"></p>
+<p th:text="'이름: ' + ${mentee.name}"></p>
+
+<label>게시글 유형 선택:</label>
+<select id="boardStatusSelect">
+    <option value="ALL" th:selected="${currentStatus == 'ALL'}">전체</option>
+    <option value="FREE" th:selected="${currentStatus == 'FREE'}">자유 게시판</option>
+    <option value="PERSONAL" th:selected="${currentStatus == 'PERSONAL'}">1:1 게시판</option>
+</select>
+
+<br><br>
+
+<div id="board-result" th:fragment="boardTable">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${boardList}">
+            <td th:text="${board.boardId}"></td>
+            <td>
+                <a th:href="@{'/board/' + ${board.boardId}}" th:text="${board.title}"></a>
+            </td>
+            <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></td>
+        </tr>
+        <tr th:if="${boardList.size() == 0}">
+            <td colspan="3">게시글이 없습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('boardStatusSelect').addEventListener('change', function () {
+        const status = this.value;
+        fetch(`/board/mentee/filter?status=${status}`)
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('board-result').innerHTML = html;
+            });
+    });
+</script>
+</body>
+</html>
