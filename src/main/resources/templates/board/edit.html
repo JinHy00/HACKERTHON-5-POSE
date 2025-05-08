@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+</head>
+<body>
+<h1>게시글 수정</h1>
+
+<form th:action="@{'/board/edit/' + ${board.boardId}}" method="post" enctype="multipart/form-data" th:object="${board}">
+    <input type="text" th:field="*{title}" placeholder="제목" required /> <br>
+    <textarea th:field="*{content}" placeholder="내용" required></textarea> <br>
+    <div th:if="${board.image}">
+        <p>현재 이미지:</p>
+        <img th:src="${board.image}" alt="현재 이미지" style="max-width: 200px;"><br>
+    </div>
+    <input type="file" name="imageFile"/> <br>
+    <input type="text" th:field="*{mentorId}" placeholder="멘토 ID (선택)" /> <br>
+    <input type="hidden" th:field="*{boardStatus}" />
+    <br><br>
+    <button type="submit">수정 완료</button>
+</form>
+
+<a th:href="@{/board}">목록으로</a>
+</body>
+</html>

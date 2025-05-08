@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 목록</title>
+</head>
+<body>
+<h1>자유 게시판</h1>
+<a th:href="@{/board/create}">글쓰기</a>
+
+<!-- 게시글 테이블 -->
+<table border="1">
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="board : ${boardPage.content}">
+        <td th:text="${board.boardId}"></td>
+        <td>
+            <a th:href="@{'/board/' + ${board.boardId}}" th:text="${board.title}"></a>
+        </td>
+        <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 페이징 -->
+<div>
+    <span th:if="${boardPage.hasPrevious()}">
+        <a th:href="@{/board(page=${boardPage.number - 1})}">이전</a>
+    </span>
+
+    <span th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}">
+        <a th:href="@{/board(page=${i})}" th:text="${i + 1}" th:classappend="${boardPage.number == i} ? 'active' : ''"></a>
+    </span>
+
+    <span th:if="${boardPage.hasNext()}">
+        <a th:href="@{/board(page=${boardPage.number + 1})}">다음</a>
+    </span>
+</div>
+</body>
+</html>

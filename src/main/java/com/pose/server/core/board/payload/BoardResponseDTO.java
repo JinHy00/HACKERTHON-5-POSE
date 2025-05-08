@@ -1,6 +1,7 @@
 package com.pose.server.core.board.payload;
 
 
+import com.pose.server.core.board.domain.BoardStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,8 @@ public class BoardResponseDTO {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private BoardStatus boardStatus;
 
     private String mentorId;
 }

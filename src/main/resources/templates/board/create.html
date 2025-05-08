@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+</head>
+<body>
+<h1>게시글 작성</h1>
+
+<form th:action="@{/board/create}" method="post" enctype="multipart/form-data" th:object="${board}">
+    <input type="text" th:field="*{title}" placeholder="제목" required /> <br>
+    <textarea th:field="*{content}" placeholder="내용" required></textarea> <br>
+    <input type="file" name="imageFile"/> <br>
+    <input type="text" th:field="*{mentorId}" placeholder="멘토 ID (선택)" /> <br>
+    <select th:field="*{boardStatus}" required>
+        <option value="FREE">FREE</option>
+        <option value="PERSONAL">PERSONAL</option>
+    </select>
+    <br><br>
+    <button type="submit">저장</button>
+</form>
+
+<a th:href="@{/board}">취소</a>
+</body>
+</html>

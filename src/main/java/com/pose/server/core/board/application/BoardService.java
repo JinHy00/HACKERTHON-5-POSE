@@ -1,11 +1,14 @@
 package com.pose.server.core.board.application;
 
 import com.pose.server.core.board.domain.BoardEntity;
+import com.pose.server.core.board.domain.BoardStatus;
 import com.pose.server.core.board.infrastructure.BoardRepository;
 import com.pose.server.core.board.payload.BoardRequestDTO;
 import com.pose.server.core.board.payload.BoardResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +37,9 @@ public class BoardService {
     }
 
 
-    /* 게시글 목록 */
-    public List<BoardResponseDTO> getAllBoardList() {
-        return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+    /* 자유 게시글 목록 */
+    public Page<BoardResponseDTO> getPagedBoardList(Pageable pageable) {
+        return boardRepository.findByBoardStatus(BoardStatus.FREE, pageable)
                 .map(board -> BoardResponseDTO.builder()
                         .boardId(board.getBoardId())
                         .memberId(board.getMemberId())
@@ -44,25 +47,42 @@ public class BoardService {
                         .content(board.getContent())
                         .image(board.getImage())
                         .mentorId(board.getMentorId())
+                        .boardStatus(board.getBoardStatus())
                         .createdAt(board.getCreatedAt())
                         .updatedAt(board.getUpdatedAt())
-                        .build())
-                .toList();
+                        .build());
     }
 
+
+
+
     /* 게시글 한개 */
-    public BoardEntity getBoardById(Long boardId) {
-        return boardRepository.findById(boardId)
+    public BoardResponseDTO getBoardById(Long boardId) {
+        BoardEntity board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        return BoardResponseDTO.builder()
+                .boardId(board.getBoardId())
+                .memberId(board.getMemberId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .image(board.getImage())
+                .mentorId(board.getMentorId())
+                .boardStatus(board.getBoardStatus())
+                .createdAt(board.getCreatedAt())
+                .updatedAt(board.getUpdatedAt())
+                .build();
     }
+
 
 
 
     /* 게시글 검색
     * => 어떤식으로 검색할 건지
     * */
-    public List<BoardResponseDTO> searchByTitle(String keyword) {
-        return boardRepository.findByTitleContainingIgnoreCase(keyword).stream()
+    public Page<BoardResponseDTO> searchByTitle(String keyword, Pageable pageable) {
+        return boardRepository.findByTitleContainingIgnoreCaseAndBoardStatus(
+                        keyword, BoardStatus.FREE, pageable)
                 .map(board -> BoardResponseDTO.builder()
                         .boardId(board.getBoardId())
                         .memberId(board.getMemberId())
@@ -70,11 +90,13 @@ public class BoardService {
                         .content(board.getContent())
                         .image(board.getImage())
                         .mentorId(board.getMentorId())
+                        .boardStatus(board.getBoardStatus())
                         .createdAt(board.getCreatedAt())
                         .updatedAt(board.getUpdatedAt())
-                        .build())
-                .toList();
+                        .build());
     }
+
+
 
 
 
@@ -101,6 +123,7 @@ public class BoardService {
                 .image(board.getImage())
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
+                .boardStatus(board.getBoardStatus())
                 .mentorId(board.getMentorId())
                 .build();
     }

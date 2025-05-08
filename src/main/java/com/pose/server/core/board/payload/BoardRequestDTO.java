@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class BoardRequestDTO {
 
-    @NotNull
     private Long memberId;
 
     @NotBlank
