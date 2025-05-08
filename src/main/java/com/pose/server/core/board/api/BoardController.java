@@ -93,9 +93,14 @@ public class BoardController {
 
     /* 게시글 한개 view */
     @GetMapping("/{boardId}")
-    public String view(@PathVariable Long boardId, Model model) {
+    public String view(@PathVariable Long boardId, Model model, HttpSession session) {
         BoardResponseDTO board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);
+
+        // 세션 유저 ID 추가
+        String userId = (String) session.getAttribute("user");
+        model.addAttribute("userId", userId);
+
         return "board/view";
     }
 

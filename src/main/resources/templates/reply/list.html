@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>댓글 목록</title>
+</head>
+<body>
+<!-- ajax로 댓글 list -->
+<div th:fragment="replyList">
+    <ul>
+        <li th:each="reply : ${replies}">
+            <p>
+                <strong th:text="${reply.name}"></strong>:
+                <span th:text="${reply.replyContent}"></span>
+                <small th:text="${#temporals.format(reply.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+            </p>
+
+            <!-- 본인 댓글인 경우에만 수정/삭제 -> 잘 안됨 -->
+            <!--<div th:if="${userId == reply.userId}">-->
+                <!-- 수정 폼 -->
+                <form class="edit-reply-form" th:attr="data-reply-id=${reply.replyId}">
+                    <textarea th:text="${reply.replyContent}"></textarea>
+                    <button type="submit">수정</button>
+                </form>
+
+                <!-- 삭제 폼 -->
+                <form class="delete-reply-form" th:attr="data-reply-id=${reply.replyId}">
+                    <button type="submit">삭제</button>
+                </form>
+           <!-- </div>-->
+        </li>
+    </ul>
+</div>
+
+
+
+
+</body>
+</html>

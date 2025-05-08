@@ -21,5 +21,77 @@
     <button type="submit">삭제</button>
 </form>
 <a th:href="@{/board}">목록으로</a>
+
+<hr/>
+
+<!-- 댓글 영역 -->
+<h2>댓글</h2>
+<div id="reply-list" th:fragment="replyList">
+    <!-- Ajax로 댓글 리스트가 여기에 로드됨 -->
+</div>
+
+<!-- 댓글 작성 폼 -->
+<form id="reply-form">
+    <input type="hidden" id="boardId" th:value="${board.boardId}" />
+    <textarea id="replyContent" placeholder="댓글을 입력하세요" required></textarea><br>
+    <button type="submit">댓글 작성</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const boardId = document.getElementById("boardId").value;
+
+        function loadReplies() {
+            fetch(`/reply/list/${boardId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("reply-list").innerHTML = html;
+
+                    // 댓글 수정 처리
+                    document.querySelectorAll(".edit-reply-form").forEach(form => {
+                        form.addEventListener("submit", function(e) {
+                            e.preventDefault();
+                            const replyId = this.dataset.replyId;
+                            const newContent = this.querySelector("textarea").value;
+
+                            fetch(`/reply/update/${replyId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `replyContent=${encodeURIComponent(newContent)}&boardId=${boardId}`
+                            }).then(() => loadReplies());
+                        });
+                    });
+
+                    // 댓글 삭제 처리
+                    document.querySelectorAll(".delete-reply-form").forEach(form => {
+                        form.addEventListener("submit", function(e) {
+                            e.preventDefault();
+                            const replyId = this.dataset.replyId;
+                            fetch(`/reply/delete/${replyId}?boardId=${boardId}`, {
+                                method: 'POST'
+                            }).then(() => loadReplies());
+                        });
+                    });
+                });
+        }
+
+        loadReplies();
+
+        document.getElementById("reply-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const content = document.getElementById("replyContent").value;
+
+            fetch("/reply/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `boardId=${boardId}&replyContent=${encodeURIComponent(content)}`
+            }).then(() => {
+                document.getElementById("replyContent").value = '';
+                loadReplies();
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
