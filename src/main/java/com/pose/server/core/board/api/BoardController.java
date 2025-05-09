@@ -2,6 +2,7 @@ package com.pose.server.core.board.api;
 
 import com.pose.server.core.board.application.BoardService;
 import com.pose.server.core.board.domain.BoardEntity;
+import com.pose.server.core.board.domain.BoardStatus;
 import com.pose.server.core.board.payload.BoardRequestDTO;
 import com.pose.server.core.board.payload.BoardResponseDTO;
 import com.pose.server.core.member.application.MemberService;
@@ -89,6 +90,34 @@ public class BoardController {
     /* 멘토 별 게시글 리스트 (1:1 게시판 리스트)
     * 멘토 마이페이지에서 뜨도록?
     * */
+//    @GetMapping("/mentor")
+//    public String mentorPage(HttpSession session, Model model) {
+//        String userId = (String) session.getAttribute("user");
+//        if (userId == null) {
+//            return "redirect:/members/login";
+//        }
+//
+//        Long mentorId = boardService
+//
+//        // 멘토 정보
+//        model.addAttribute("mentor", memberService.findByUserId(userId));
+//
+//        // 멘토 ID 기준 1:1 게시글 리스트
+//        List<BoardResponseDTO> personalBoards = boardService.findByMentorIdAndStatus(mentorId, BoardStatus.PERSONAL);
+//        model.addAttribute("boardList", personalBoards);
+//
+//        return "board/mentor-page"; // 만들어야 할 Thymeleaf 뷰
+//    }
+    @GetMapping("/mentor")
+    public String mentorPage(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute("user");
+        if (userId == null) return "redirect:/members/login";
+
+        List<BoardResponseDTO> boards = boardService.findPersonalBoardsMentoredBy(userId);
+        model.addAttribute("boardList", boards);
+        return "board/mentor-page";
+    }
+
 
 
     /* 게시글 한개 view */
@@ -123,6 +152,11 @@ public class BoardController {
     @GetMapping("/create")
     public String createForm(Model model, HttpSession session) {
         String userId = (String) session.getAttribute("user");
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+        }
+
         if(userId == null) {
             return "redirect:/members/login";
         }
@@ -166,6 +200,10 @@ public class BoardController {
     @GetMapping("/edit/{boardId}")
     public String editForm(@PathVariable Long boardId, Model model, HttpSession session) {
         String userId = (String) session.getAttribute("user");
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+        }
+
         if(userId == null) {
             return "redirect:/members/login";
         }

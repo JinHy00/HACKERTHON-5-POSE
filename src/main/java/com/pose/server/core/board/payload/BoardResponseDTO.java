@@ -5,6 +5,7 @@ import com.pose.server.core.board.domain.BoardStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,5 +31,9 @@ public class BoardResponseDTO {
     private BoardStatus boardStatus;
 
     private String mentorId;
+
+    private String name;
+
+    private List<ReplyResponseDTO> replyByPost;
 }
 

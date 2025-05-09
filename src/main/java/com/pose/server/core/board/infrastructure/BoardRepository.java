@@ -22,4 +22,8 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     // 멤버 ID로 전체 조회 (상태 무관)
     List<BoardEntity> findByMemberEntity_MemberId(Long memberId);
 
+    // 멤버 게시글 => mentorId , boardStatus 로
+    List<BoardEntity> findByMentorIdAndBoardStatus(String mentorId, BoardStatus boardStatus);
+
+
 }

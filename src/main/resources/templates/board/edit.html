@@ -1,10 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>게시글 수정</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <!-- Bootstrap Icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" />
+    <!-- SimpleLightbox plugin CSS-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
+    <!-- Core theme CSS -->
+    <link href="/css/styles.css" rel="stylesheet" />
 </head>
-<body>
+
+<body id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" th:href="${user} != null ? '/loginhome' : '/'">MM Community</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/members/login">로그인</a></li>
+                <li class="nav-item"><a class="nav-link" href="/members/join">회원가입</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <h1>게시글 수정</h1>
 
 <form th:action="@{'/board/edit/' + ${board.boardId}}" method="post" enctype="multipart/form-data" th:object="${board}">
@@ -15,7 +44,9 @@
         <img th:src="${board.image}" alt="현재 이미지" style="max-width: 200px;"><br>
     </div>
     <input type="file" name="imageFile"/> <br>
-    <input type="text" th:field="*{mentorId}" placeholder="멘토 ID (선택)" /> <br>
+    <div th:if="${board.boardStatus.name() == 'PERSONAL'}">
+        <input type="text" th:field="*{mentorId}" placeholder="멘토 ID (선택)" /> <br>
+    </div>
     <input type="hidden" th:field="*{boardStatus}" />
     <br><br>
     <button type="submit">수정 완료</button>
