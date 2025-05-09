@@ -67,7 +67,7 @@
 <!--                    <a class="btn btn-secondary btn-sm" th:href="@{/board}">목록</a>-->
 <!--                </div>-->
                 <div class="mt-4"
-                     th:if="${userId != null and userId == board.userId}">
+                     th:if="${user != null and user == board.userId}">
                     <a class="btn btn-warning btn-sm"
                        th:href="@{'/board/edit/' + ${board.boardId}}">수정</a>
                     <form th:action="@{'/board/delete/' + ${board.boardId}}"

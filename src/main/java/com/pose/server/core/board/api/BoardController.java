@@ -39,14 +39,23 @@ public class BoardController {
     /* 자유 게시판 리스트 */
     @GetMapping("")
     public String list(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                       Model model) {
+                       Model model, HttpSession session) {
+
+        String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
+        }
+
         Page<BoardResponseDTO> boardPage = boardService.getPagedBoardList(pageable);
         model.addAttribute("boardPage", boardPage);
         return "board/list";
     }
 
     /* 멘티 별 게시글 리스트
-      * 멘티 마이페이지에서 뜨도록
+     * 멘티 마이페이지에서 뜨도록
      */
     @GetMapping("/mentee")
     public String menteePage(@RequestParam(value = "status", required = false, defaultValue = "ALL") String status,
@@ -54,6 +63,13 @@ public class BoardController {
                              Model model) {
 
         String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
+        }
+
         if (userId == null) return "redirect:/members/login";
 
         Long memberId = memberService.findByUserId(userId).getMemberId();
@@ -74,6 +90,13 @@ public class BoardController {
                                     HttpSession session,
                                     Model model) {
         String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
+        }
+
         if (userId == null) return "redirect:/members/login";
 
         Long memberId = memberService.findByUserId(userId).getMemberId();
@@ -88,8 +111,8 @@ public class BoardController {
 
 
     /* 멘토 별 게시글 리스트 (1:1 게시판 리스트)
-    * 멘토 마이페이지에서 뜨도록?
-    * */
+     * 멘토 마이페이지에서 뜨도록?
+     * */
 //    @GetMapping("/mentor")
 //    public String mentorPage(HttpSession session, Model model) {
 //        String userId = (String) session.getAttribute("user");
@@ -111,6 +134,12 @@ public class BoardController {
     @GetMapping("/mentor")
     public String mentorPage(HttpSession session, Model model) {
         String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
+        }
         if (userId == null) return "redirect:/members/login";
 
         List<BoardResponseDTO> boards = boardService.findPersonalBoardsMentoredBy(userId);
@@ -126,9 +155,13 @@ public class BoardController {
         BoardResponseDTO board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);
 
-        // 세션 유저 ID 추가
         String userId = (String) session.getAttribute("user");
-        model.addAttribute("userId", userId);
+        String role = session.getAttribute("role").toString();
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
+        }
 
         return "board/view";
     }
@@ -138,7 +171,16 @@ public class BoardController {
     @GetMapping("/search")
     public String search(@RequestParam String keyword,
                          @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                         Model model) {
+                         Model model, HttpSession session) {
+
+        String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
+
+        if (userId != null) {
+            model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
+        }
+
         Page<BoardResponseDTO> resultPage = boardService.searchByTitle(keyword, pageable);
         model.addAttribute("boardPage", resultPage); // boardList → boardPage
         model.addAttribute("keyword", keyword); // 검색어 유지용
@@ -147,14 +189,16 @@ public class BoardController {
 
 
     /* 게시글 작성 페이지
-    * userId null 처리 할 클래스? 필요
-    * */
+     * userId null 처리 할 클래스? 필요
+     * */
     @GetMapping("/create")
     public String createForm(Model model, HttpSession session) {
         String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
 
         if (userId != null) {
             model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
         }
 
         if(userId == null) {
@@ -200,8 +244,11 @@ public class BoardController {
     @GetMapping("/edit/{boardId}")
     public String editForm(@PathVariable Long boardId, Model model, HttpSession session) {
         String userId = (String) session.getAttribute("user");
+        String role = session.getAttribute("role").toString();
+
         if (userId != null) {
             model.addAttribute("user", userId); // 세션에 있는 사용자 정보 전달
+            model.addAttribute("role", role);
         }
 
         if(userId == null) {
@@ -221,7 +268,7 @@ public class BoardController {
         if (dto.getImageFile() != null && !dto.getImageFile().isEmpty()) {
             String originalName = dto.getImageFile().getOriginalFilename();
             String fileName = UUID.randomUUID() + "_" + originalName;
-            Path uploadPath = Paths.get("uploads/images");
+            Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads", "images");
             Files.createDirectories(uploadPath);
             Path filePath = uploadPath.resolve(fileName);
             dto.getImageFile().transferTo(filePath.toFile());
@@ -239,4 +286,3 @@ public class BoardController {
         return "redirect:/board";
     }
 }
-
