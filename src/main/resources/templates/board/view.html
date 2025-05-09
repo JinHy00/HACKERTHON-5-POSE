@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title th:text="${board.title}">게시글 보기</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>게시글</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <!-- Bootstrap Icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" />
+    <!-- SimpleLightbox plugin CSS-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
+    <!-- Core theme CSS -->
+    <link href="/css/styles.css" rel="stylesheet" />
 </head>
-<body class="container mt-5">
+
+<body id="page-top">
+
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
     <div class="container px-4 px-lg-5">
@@ -23,147 +36,128 @@
     </div>
 </nav>
 
-<h2 th:text="${board.title}">제목</h2>
-<p class="text-muted">
-    작성일: <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-</p>
+<!-- Masthead 스타일 영역 -->
+<header class="masthead mt-5 pt-5">
+    <div class="container">
+        <div class="card border-0 shadow rounded-3 my-5">
+            <div class="card-body p-5">
+                <!-- 게시글 정보 -->
+                <h2 class="text-center mb-4" th:text="${board.title}">제목</h2>
 
-<p th:if="${board.createdAt != board.updatedAt}" class="text-muted">
-    수정일: <span th:text="${#temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
-</p>
+                <p class="text-muted text-center">
+                    작성일: <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                </p>
 
-<p class="lead" th:text="${board.content}">내용</p>
-<img th:if="${board.image}" th:src="${board.image}" alt="첨부 이미지" class="img-fluid" style="max-width: 400px;"/>
+                <p th:if="${board.createdAt != board.updatedAt}" class="text-muted text-center">
+                    수정일: <span th:text="${#temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                </p>
 
-<div class="mt-4">
-    <a class="btn btn-warning btn-sm" th:href="@{'/board/edit/' + ${board.boardId}}">수정</a>
-    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post" class="d-inline">
-        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
-    </form>
-    <a class="btn btn-secondary btn-sm" th:href="@{/board}">목록</a>
-</div>
+                <p class="lead mt-4" th:text="${board.content}">내용</p>
 
-<hr/>
+                <div class="text-center my-4">
+                    <img th:if="${board.image}" th:src="${board.image}" alt="첨부 이미지" class="img-fluid" style="max-width: 400px;" />
+                </div>
 
-<!-- 댓글 영역 -->
-<h4 class="mt-5">댓글</h4>
-<div id="reply-list" th:fragment="replyList"></div>
+                <!-- 수정, 삭제, 목록 버튼 -->
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <a class="btn btn-warning btn-sm" th:href="@{'/board/edit/' + ${board.boardId}}">수정</a>
+                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                    <a class="btn btn-secondary btn-sm" th:href="@{/board}">목록</a>
+                </div>
 
-<!-- 댓글 작성 -->
-<form id="reply-form" class="mt-3">
-    <input type="hidden" id="boardId" th:value="${board.boardId}" />
-    <div class="mb-2">
-        <textarea id="replyContent" class="form-control" placeholder="댓글을 입력하세요" required></textarea>
+                <hr class="my-5" />
+
+                <!-- 댓글 영역 -->
+                <h4 class="mt-5">댓글</h4>
+                <div id="reply-list" th:fragment="replyList"></div>
+
+                <!-- 댓글 작성 -->
+                <form id="reply-form" class="mt-3">
+                    <input type="hidden" id="boardId" th:value="${board.boardId}" />
+                    <div class="mb-2">
+                        <textarea id="replyContent" class="form-control" placeholder="댓글을 입력하세요" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">댓글 작성</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary btn-sm">댓글 작성</button>
-</form>
+</header>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+<script src="/js/scripts.js"></script>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const boardId = document.getElementById("boardId").value;
+    function toggleMentorId() {
+    const selected = document.querySelector('input[name="boardStatus"]:checked');
+    const mentorDiv = document.getElementById('mentorIdGroup');
+    if (selected && selected.value === 'PERSONAL') {
+        mentorDiv.style.display = 'block';
+    } else {
+        mentorDiv.style.display = 'none';
+    }
+}
 
-        function loadReplies() {
-            fetch(`/reply/list/${boardId}`)
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById("reply-list").innerHTML = html;
+window.onload = toggleMentorId;
 
-                    // 댓글 수정 처리
-                    document.querySelectorAll(".edit-reply-form").forEach(form => {
-                        form.addEventListener("submit", function (e) {
-                            e.preventDefault();
-                            const replyId = this.dataset.replyId;
-                            const newContent = this.querySelector("textarea").value;
-                            fetch(`/reply/update/${replyId}`, {
-                                method: "POST",
-                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                body: `replyContent=${encodeURIComponent(newContent)}&boardId=${boardId}`
-                            }).then(() => loadReplies());
-                        });
-                    });
+document.addEventListener("DOMContentLoaded", function () {
+    const boardId = document.getElementById("boardId").value;
 
-                    // 댓글 삭제 처리
-                    document.querySelectorAll(".delete-reply-form").forEach(form => {
-                        form.addEventListener("submit", function (e) {
-                            e.preventDefault();
-                            const replyId = this.dataset.replyId;
-                            fetch(`/reply/delete/${replyId}?boardId=${boardId}`, {
-                                method: "POST"
-                            }).then(() => loadReplies());
-                        });
+    function loadReplies() {
+        fetch(`/reply/list/${boardId}`)
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("reply-list").innerHTML = html;
+
+                // 댓글 수정 처리
+                document.querySelectorAll(".edit-reply-form").forEach(form => {
+                    form.addEventListener("submit", function (e) {
+                        e.preventDefault();
+                        const replyId = this.dataset.replyId;
+                        const newContent = this.querySelector("textarea").value;
+                        fetch(`/reply/update/${replyId}`, {
+                            method: "POST",
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `replyContent=${encodeURIComponent(newContent)}&boardId=${boardId}`
+                        }).then(() => loadReplies());
                     });
                 });
-        }
 
-        loadReplies();
-
-        // 댓글 작성 처리
-        document.getElementById("reply-form").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const content = document.getElementById("replyContent").value;
-            fetch("/reply/create", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `boardId=${boardId}&replyContent=${encodeURIComponent(content)}`
-            }).then(() => {
-                document.getElementById("replyContent").value = '';
-                loadReplies();
+                // 댓글 삭제 처리
+                document.querySelectorAll(".delete-reply-form").forEach(form => {
+                    form.addEventListener("submit", function (e) {
+                        e.preventDefault();
+                        const replyId = this.dataset.replyId;
+                        fetch(`/reply/delete/${replyId}?boardId=${boardId}`, {
+                            method: "POST"
+                        }).then(() => loadReplies());
+                    });
+                });
             });
+    }
+
+    loadReplies();
+
+    // 댓글 작성 처리
+    document.getElementById("reply-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const content = document.getElementById("replyContent").value;
+        fetch("/reply/create", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `boardId=${boardId}&replyContent=${encodeURIComponent(content)}`
+        }).then(() => {
+            document.getElementById("replyContent").value = '';
+            loadReplies();
         });
     });
+});
 </script>
 
-
-<!--<script>-->
-<!--    document.addEventListener("DOMContentLoaded", function () {-->
-<!--        const boardId = document.getElementById("boardId").value;-->
-
-<!--        function loadReplies() {-->
-<!--            fetch(/reply/list/${boardId})-->
-<!--                .then(res => res.text())-->
-<!--                .then(html => {-->
-<!--                    document.getElementById("reply-list").innerHTML = html;-->
-
-<!--                    document.querySelectorAll(".edit-reply-form").forEach(form => {-->
-<!--                        form.addEventListener("submit", function (e) {-->
-<!--                            e.preventDefault();-->
-<!--                            const replyId = this.dataset.replyId;-->
-<!--                            const newContent = this.querySelector("textarea").value;-->
-<!--                            fetch(/reply/update/${replyId}, {-->
-<!--                                method: "POST",-->
-<!--                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },-->
-<!--                                body: replyContent=${encodeURIComponent(newContent)}&boardId=${boardId}-->
-<!--                            }).then(() => loadReplies());-->
-<!--                        });-->
-<!--                    });-->
-
-<!--                    document.querySelectorAll(".delete-reply-form").forEach(form => {-->
-<!--                        form.addEventListener("submit", function (e) {-->
-<!--                            e.preventDefault();-->
-<!--                            const replyId = this.dataset.replyId;-->
-<!--                            fetch(/reply/delete/${replyId}?boardId=${boardId}, {-->
-<!--                                method: "POST"-->
-<!--                            }).then(() => loadReplies());-->
-<!--                        });-->
-<!--                    });-->
-<!--                });-->
-<!--        }-->
-
-<!--        loadReplies();-->
-
-<!--        document.getElementById("reply-form").addEventListener("submit", function (e) {-->
-<!--            e.preventDefault();-->
-<!--            const content = document.getElementById("replyContent").value;-->
-<!--            fetch("/reply/create", {-->
-<!--                method: "POST",-->
-<!--                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },-->
-<!--                body: boardId=${boardId}&replyContent=${encodeURIComponent(content)}-->
-<!--            }).then(() => {-->
-<!--                document.getElementById("replyContent").value = '';-->
-<!--                loadReplies();-->
-<!--            });-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
 
 </body>
 </html>

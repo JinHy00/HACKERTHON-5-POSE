@@ -121,7 +121,7 @@ public class BoardController {
 
 
     /* 게시글 한개 view */
-    @GetMapping("/{boardId}")
+    @GetMapping("/view/{boardId}")
     public String view(@PathVariable Long boardId, Model model, HttpSession session) {
         BoardResponseDTO board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);

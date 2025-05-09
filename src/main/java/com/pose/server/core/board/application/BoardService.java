@@ -107,40 +107,7 @@ public class BoardService {
                 .toList();
     }
 
-    /*. 멘토별 리스트*/
-//    public List<BoardResponseDTO> findByMentorIdAndStatus(Long mentorId, BoardStatus status) {
-//        List<BoardEntity> boards = boardRepository.findByMentorIdAndBoardStatus(String.valueOf(mentorId), status);
-//        return boards.stream()
-//                .map(board -> BoardResponseDTO.builder()
-//                        .boardId(board.getBoardId())
-//                        .memberId(board.getMemberEntity().getMemberId())
-//                        .title(board.getTitle())
-//                        .content(board.getContent())
-//                        .image(board.getImage())
-//                        .mentorId(board.getMentorId())
-//                        .boardStatus(board.getBoardStatus())
-//                        .createdAt(board.getCreatedAt())
-//                        .updatedAt(board.getUpdatedAt())
-//                        .build())
-//                .toList();
-//    }
-//
-//    public List<BoardResponseDTO> findPersonalBoardsByMentorId(String mentorId) {
-//        List<BoardEntity> boards = boardRepository.findByMentorIdAndBoardStatus(mentorId, BoardStatus.PERSONAL);
-//        return boards.stream()
-//                .map(board -> BoardResponseDTO.builder()
-//                        .boardId(board.getBoardId())
-//                        .memberId(board.getMemberEntity().getMemberId())
-//                        .title(board.getTitle())
-//                        .content(board.getContent())
-//                        .image(board.getImage())
-//                        .mentorId(board.getMentorId())
-//                        .boardStatus(board.getBoardStatus())
-//                        .createdAt(board.getCreatedAt())
-//                        .updatedAt(board.getUpdatedAt())
-//                        .build())
-//                .toList();
-//    }
+    /* 멘토별 리스트*/
     public List<BoardResponseDTO> findPersonalBoardsMentoredBy(String userId) {
         // 전체 게시글 가져오기
         List<BoardEntity> allBoards = boardRepository.findAll();
