@@ -19,7 +19,7 @@
             </div>
 
             <!-- 수정/삭제 (권한자만 노출) -->
-            <div th:if="${session.user == reply.userId}" class="mt-2">
+            <div th:if="${userId == reply.userId}" class="mt-2">
                 <form class="edit-reply-form d-flex gap-2 mb-2" th:attr="data-reply-id=${reply.replyId}">
                     <textarea class="form-control form-control-sm" th:text="${reply.replyContent}"></textarea>
                     <button type="submit" class="btn btn-outline-success btn-sm">수정</button>

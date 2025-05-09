@@ -18,6 +18,8 @@ public class BoardResponseDTO {
 
     private Long memberId;
 
+    private String userId;
+
     private String title;
 
     private String content;
