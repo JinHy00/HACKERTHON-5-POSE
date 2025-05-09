@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>멘토 마이페이지</title>
+</head>
+<body>
+<!--<h2 th:text="${mentor.mentorId} + ' 님의 1:1 게시판'"></h2>-->
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>제목</th>
+        <th>멘토</th>
+        <th>작성자 ID</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="board : ${boardList}">
+        <td><a th:href="@{'/board/view/' + ${board.boardId}}" th:text="${board.title}">제목</a></td>
+        <td th:text="${board.mentorId + ' 님'}">멘토</td>
+        <td th:text="${board.memberId}">작성자</td>
+        <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}">작성일</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
