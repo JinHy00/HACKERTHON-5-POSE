@@ -56,7 +56,12 @@ public class ReplyController {
 
     /* 게시글 별 댓글 리스트 */
     @GetMapping("/list/{boardId}")
-    public String getReplies(@PathVariable Long boardId, Model model) {
+    public String getReplies(@PathVariable Long boardId, Model model, HttpSession session) {
+        String userId = (String) session.getAttribute("user");
+        if (userId == null) return "redirect:/members/login";
+
+        model.addAttribute("user", userId);
+
         List<ReplyResponseDTO> replies = replyService.getRepliesByBoardId(boardId);
         model.addAttribute("replies", replies);
         return "reply/list :: replyList"; // fragment 반환용
